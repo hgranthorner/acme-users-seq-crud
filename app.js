@@ -1,5 +1,5 @@
 const { getAllUsers, User } = require('./db')
-const { homePage, updatePage } = require('./views')
+const { homePage, updatePage, failedPage } = require('./views')
 const express = require('express')
 const morgan = require('morgan')
 const methodOverride = require('method-override')
@@ -37,11 +37,17 @@ app.get('/users', (req, res, next) => {
 })
 
 app.get('/users/:id', (req, res, next) => {
+  console.log(req.params.id)
   res.send(updatePage(req.users, req.params.id))
 })
 
 app.put('/users/:id', (req, res, next) => {
-  console.log(req.body.firstName, req.body.lastName)
+  if (!req.body.firstName || !req.body.lastName) {
+    const emptyArray = []
+    if (!req.body.firstName) emptyArray.push('firstName')
+    if (!req.body.lastName) emptyArray.push('lastName')
+    res.send(failedPage(emptyArray))
+  }
   User.update(
     {
       firstName: req.body.firstName,
@@ -49,13 +55,13 @@ app.put('/users/:id', (req, res, next) => {
     },
     {
       where: {
-        id: Number(req.params.id)
+        id: req.params.id
       },
       returning: true,
       plain: true
     }
   )
-    .then(() => res.redirect('/user'))
+    .then(() => res.redirect('/users'))
     .catch(next)
 })
 

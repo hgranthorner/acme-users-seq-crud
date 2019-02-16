@@ -24,7 +24,7 @@ const updatePage = (users, id) => {
       .join('')}
     </ul>
     <div style='border: solid 1px black; border-radius: 5px; margin-top: 10px; padding: 10px'>
-    <form method='post' action='/users/:${id}?_method=put' >
+    <form method='post' action='/users/${id}?_method=put' >
       <input name='firstName' value='${users.find(user => user.id == id).firstName}'/>
       <input name='lastName' value='${users.find(user => user.id == id).lastName}'/>
       <button>Update</button>
